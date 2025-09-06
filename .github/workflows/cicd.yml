@@ -55,7 +55,7 @@ jobs:
           python3 -c "
           from ruamel.yaml import YAML
           yaml = YAML()
-          values_file = 'charts/python-app/values.yaml'
+          values_file = './charts/python-app/values.yaml'
           with open(values_file) as f:
               data = yaml.load(f)
           data['image']['tag'] = '${{ needs.CI.outputs.new_tag }}'

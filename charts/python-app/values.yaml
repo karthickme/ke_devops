@@ -3,7 +3,7 @@ replicaCount: 5
 image:
   repository: smekarthick/flaskke
   pullPolicy: IfNotPresent
-  tag: v12
+  tag: v13
 
 imagePullSecrets: []
 nameOverride: ''

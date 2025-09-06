@@ -1,0 +1,11 @@
+name: Echo on Self-hosted Runner
+
+on:
+  workflow_dispatch:
+
+jobs:
+  echo-job:
+    runs-on: self-hosted
+    steps:
+      - name: Echo Hello World
+        run: echo "Hello from self-hosted runner!"

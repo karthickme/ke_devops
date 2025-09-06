@@ -37,6 +37,8 @@ jobs:
             smekarthick/flaskke:${{env.new_tag}}
             smekarthick/flaskke:latest
   CD:
+    permissions:
+      contents: write
     needs: CI
     runs-on: self-hosted
     steps:

@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hom():
-    return '<h1>Now this will be deployed using argo, added CI/CD, with correct tag!</h1>'
+    return '<h1>So finally did a end to end CICD deplyemny to k8s using ArgoCD!</h1>'
 
 @app.route('/api/v1/info')
 def info():

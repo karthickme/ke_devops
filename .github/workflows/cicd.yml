@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: CI/CD
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
       - main
 
 jobs:
-  docker:
+  CI:
     runs-on: ubuntu-latest
     steps:
       - name: Login to Docker Hub
@@ -34,3 +34,20 @@ jobs:
           tags: |
             smekarthick/flaskke:${{env.new_tag}}
             smekarthick/flaskke:latest
+  CD:
+    needs: CI
+    runs-on: self-hosted
+    steps:
+      - name: Check and Install ArgoCD CLI
+        run: |
+          if ! command -v argocd &> /dev/null; then
+            echo "ArgoCD CLI not found. Installing..."
+            curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+            sudo install -m 555 argocd /usr/local/bin/argocd
+          else
+            echo "ArgoCD CLI already installed."
+          fi
+      - name: ArgoCD login and Sync
+        run: |
+          argocd login argocd.ke.com --insecure --grpc-web --username admin --password ${{ secrets.ARGOCD_CRED }}
+          argocd app sync argocd/kedevops 

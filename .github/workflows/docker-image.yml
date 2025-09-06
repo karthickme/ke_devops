@@ -31,5 +31,5 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ env.new_tag }}
+          tags: smekarthick/flaskke:${{env.new_tag}}
           

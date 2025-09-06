@@ -42,12 +42,12 @@ jobs:
         run: |
           if ! command -v argocd &> /dev/null; then
             echo "ArgoCD CLI not found. Installing..."
-            curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+            curl -ksSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
             sudo install -m 555 argocd /usr/local/bin/argocd
           else
             echo "ArgoCD CLI already installed."
           fi
       - name: ArgoCD login and Sync
         run: |
-          argocd login argocd.ke.com --insecure --grpc-web --username admin --password ${{ secrets.ARGOCD_CRED }}
+          argocd login https://argocd.ke.com --insecure --grpc-web --username admin --password ${{ secrets.ARGOCD_CRED }}
           argocd app sync argocd/kedevops 

@@ -25,7 +25,7 @@ jobs:
           from urllib import request
           tags = json.loads(request.urlopen('https://registry.hub.docker.com/v2/repositories/smekarthick/flaskke/tags').read().decode('utf-8'))['results']
           new_tag = max([int(tag['name'][1:]) for tag in tags if tag['name'][1:].isnumeric()]) + 1
-          print(f'new_tag={new_tag}') " >> $GITHUB_ENV
+          print(f'new_tag=v{new_tag}') " >> $GITHUB_ENV
 
       - name: Build and push
         uses: docker/build-push-action@v6

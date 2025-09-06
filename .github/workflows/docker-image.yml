@@ -17,21 +17,19 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          # list of Docker images to use as base name for tags
-          images: |
-            smekarthick/flaskke
-          # generate Docker tags based on the following events/attributes
-          tags: |
-            type=semver,pattern=v{{major}}
+      - name: Get next Docker tag
+        id: get_tag
+        run: |
+          python3 -c "
+          import json
+          from urllib import request
+          tags = json.loads(request.urlopen('https://registry.hub.docker.com/v2/repositories/smekarthick/flaskke/tags').read().decode('utf-8'))['results']
+          new_tag = max([int(tag['name'][1:]) for tag in tags if tag['name'][1:].isnumeric()]) + 1
+          print(f'new_tag={new_tag}') " >> $GITHUB_ENV
 
-      -
-        name: Build and push
+      - name: Build and push
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ env.new_tag }}
+          

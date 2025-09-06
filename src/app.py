@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hom():
-    return '<h1>Home</h1>'
+    return '<h1>Now this will be deployed using argo</h1>'
 
 @app.route('/api/v1/info')
 def info():

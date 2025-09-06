@@ -10,6 +10,8 @@ on:
 jobs:
   CI:
     runs-on: ubuntu-latest
+    outputs:
+      new_tag: ${{env.new_tag}}
     steps:
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -47,6 +49,36 @@ jobs:
           else
             echo "ArgoCD CLI already installed."
           fi
+          pip install ruamel.yaml
+      - name: update the helm chart values file
+        run: |
+          python3 -c "
+          from ruamel.yaml import YAML
+          yaml = YAML()
+          values_file = 'charts/python-app/values.yaml'
+          with open(values_file) as f:
+              data = yaml.load(f)
+          data['image']['tag'] = '${{ needs.CI.outputs.new_tag }}'
+          with open(values_file, 'w') as f:
+              yaml.dump(data, f)
+              "
+      - name: Commit Values file
+        run: |
+          git branch
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+          git commit -m "Added new tag to vales" || echo "No changes to commit"
+          
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.8.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}
+
       - name: ArgoCD login and Sync
         run: |
           argocd login argocd-server.argocd --insecure --grpc-web --username admin --password ${{ secrets.ARGOCD_CRED }}

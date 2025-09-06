@@ -50,6 +50,9 @@ jobs:
             echo "ArgoCD CLI already installed."
           fi
           pip install ruamel.yaml
+
+      - uses: actions/checkout@v3
+
       - name: update the helm chart values file
         run: |
           python3 -c "
